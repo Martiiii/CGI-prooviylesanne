@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="et">
+<head>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
+    <title th:text="#{title.registration}"></title>
+    <link rel="stylesheet" th:href="@{~/css/flatpickr.min.css}"></link>
+    <link rel="stylesheet" th:href="@{~/css/bootstrap.min.css}"></link>
+</head>
+<body>
+<div class="container">
+    <div class="row my-1">
+        <div class="col">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-item nav-link"
+                           href="/"
+                           th:text="#{register}"
+                        ></a>
+                        <a class="nav-item nav-link"
+                           href="/registrations"
+                           th:text="#{register.list}"
+                        ></a>
+                    </div>
+                    <div class="navbar-nav ml-auto">
+                        <a class="nav-item nav-link" th:href="@{${visitVar.getId()}(lang='et')}">EST</a>
+                        <a class="nav-item nav-link" th:href="@{${visitVar.getId()}(lang='en')}">ENG</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <form class="needs-validation"
+                  novalidate="true"
+                  action="#"
+                  th:action="@{${visitVar.getId()}}"
+                  th:object="${dentistVisitDTO}"
+                  method="post">
+                <div class="form-group">
+                    <label for="doctorName"
+                           th:text="#{dentist.name}"
+                    ></label>
+                    <select id="doctorName"
+                            class="custom-select custom-select-lg mb-3"
+                            th:field="*{dentist}"
+                            th:classappend="${#fields.hasErrors('dentist') ? 'is-invalid' : ''}"
+                            th:attrappend="disabled=(${param.action} != null? (${param.action[0]} == 'edit'? 'false' : 'true') : 'true')"
+                    >
+                        <option th:value="${visitVar.getDentistName()}"
+                                th:text="${visitVar.getDentistName()}"
+                        />
+                        <option th:each="dentist : ${dentists}"
+                                th:value="${dentist.getFullname()}"
+                                th:text="${dentist.getFullname()}"
+                                th:if="${param.action} != null? (${param.action[0]} == 'edit')"
+                        />
+                    </select>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('dentist')}"
+                           th:errors="*{dentist}"
+                    ></small>
+                </div>
+                <div class="form-group">
+                    <label th:attrappend="for=(${param.action} != null? (${param.action[0]} == 'edit'? 'visitStart' : 'visitStartRead') : 'visitStartRead')"
+                           th:text="#{visit.start}"
+                    ></label>
+                    <input type="text"
+                           th:value="${#dates.format(visitVar.getVisitStart(), 'dd.MM.yyyy HH:mm')}"
+                           th:attrappend="readonly=(${param.action} != null? (${param.action[0]} == 'edit'? 'false' : 'true') : 'true'), id=(${param.action} != null? (${param.action[0]} == 'edit'? 'visitStart' : 'visitStartRead') : 'visitStartRead')"
+                           th:field="*{visitStart}"
+                           th:classappend="${#fields.hasErrors('visitStart') or #fields.hasErrors('startValid') ? 'is-invalid' : ''}"
+                           class="form-control"
+                    ></input>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('startValid')}"
+                           th:errors="*{startValid}"
+                    ></small>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('visitStart')}"
+                           th:errors="*{visitStart}"
+                    ></small>
+                </div>
+                <div class="form-group">
+                    <label th:attrappend="for=(${param.action} != null? (${param.action[0]} == 'edit'? 'visitEnd' : 'visitEndRead') : 'visitEndRead')"
+                           th:text="#{visit.end}"
+                    ></label>
+                    <input type="text"
+                           th:value="${#dates.format(visitVar.getVisitEnd(), 'dd.MM.yyyy HH:mm')}"
+                           th:attrappend="readonly=(${param.action} != null? (${param.action[0]} == 'edit'? 'false' : 'true') : 'true'), id=(${param.action} != null? (${param.action[0]} == 'edit'? 'visitEnd' : 'visitEndRead') : 'visitEndRead')"
+                           th:field="*{visitEnd}"
+                           th:classappend="${#fields.hasErrors('visitEnd') or #fields.hasErrors('startEndValid') or #fields.hasErrors('endValid') ? 'is-invalid' : ''}"
+                           class="form-control"
+                    ></input>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('endValid')}"
+                           th:errors="*{endValid}"
+                    ></small>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('startEndValid')}"
+                           th:errors="*{startEndValid}"
+                    ></small>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('visitEnd')}"
+                           th:errors="*{visitEnd}"
+                    ></small>
+                </div>
+                <a class="btn btn-primary"
+                   th:href="@{${visitVar.getId()}(action='edit')}"
+                   th:text="#{register.edit}"
+                   th:if="${param.action} == null"
+                ></a>
+                <button type="submit"
+                        class="btn btn-success"
+                        th:text="#{register.save}"
+                        th:if="${param.action} != null? (${param.action[0]} == 'edit')"
+                ></button>
+                <a class="btn btn-primary"
+                   th:href="@{${visitVar.getId()}}"
+                   th:text="#{register.cancel}"
+                   th:if="${param.action} != null? (${param.action[0]} == 'edit')"
+                ></a>
+                <a class="btn btn-danger"
+                   th:href="@{${visitVar.getId()}(action='delete')}"
+                   th:text="#{register.delete}"
+                ></a>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:src="@{~/js/jquery-3.3.1.slim.min.js}"></script>
+<script th:src="@{~/js/popper.min.js}"></script>
+<script th:src="@{~/js/bootstrap.min.js}" ></script>
+<script th:src="@{~/js/flatpickr.js}"></script>
+<script th:src="@{~/js/et.js}"></script>
+<script th:src="@{~/js/datePicker.js}" th:if="${param.action} != null? (${param.action[0]} == 'edit')"></script>
+</body>
+</html>

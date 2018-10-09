@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="et">
+<head>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
+    <title th:text="#{title.form}"></title>
+    <link rel="stylesheet" th:href="@{css/bootstrap.min.css}"></link>
+    <link rel="stylesheet" th:href="@{css/flatpickr.min.css}"></link>
+</head>
+<body>
+<div class="container">
+    <div class="row my-1">
+        <div class="col">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-item nav-link active"
+                           href="/"
+                           th:text="#{register}"
+                        ></a>
+                        <a class="nav-item nav-link"
+                           href="/registrations"
+                           th:text="#{register.list}"
+                        ></a>
+                    </div>
+                    <div class="navbar-nav ml-auto">
+                        <a class="nav-item nav-link" th:href="@{/(lang='et')}">EST</a>
+                        <a class="nav-item nav-link" th:href="@{/(lang='en')}">ENG</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="row my-1" th:if="${timeCheck != null}">
+        <div class="col">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="#{${timeCheck}}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading" th:text="#{register.welcome}"></h4>
+                <p th:text="#{register.intro}"></p>
+                <hr></hr>
+                <p class="mb-0" th:text="#{register.intro2}"></p>
+            </div>
+
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <form class="needs-validation"
+                  novalidate="true"
+                  action="#"
+                  th:action="@{/}"
+                  th:object="${dentistVisitDTO}"
+                  method="post">
+                <div class="form-group">
+                    <label for="doctorName"
+                           th:text="#{dentist.name}"
+                    ></label>
+                    <select id="doctorName"
+                            class="custom-select custom-select-lg mb-3"
+                            th:field="*{dentist}"
+                            th:classappend="${#fields.hasErrors('dentist') ? 'is-invalid' : ''}">
+                        <option th:each="dentist : ${dentists}"
+                                th:value="${dentist.getFullname()}"
+                                th:text="${dentist.getFullname()}"/>
+                    </select>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('dentist')}"
+                           th:errors="*{dentist}"
+                    ></small>
+                </div>
+                <div class="form-group">
+                    <label for="visitStart"
+                           th:text="#{visit.start}"
+                    ></label>
+                    <input id="visitStart"
+                           type="text"
+                           class="form-control"
+                           th:field="*{visitStart}"
+                           th:classappend="${#fields.hasErrors('visitStart') or #fields.hasErrors('startValid') ? 'is-invalid' : ''}"
+                    ></input>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('startValid')}"
+                           th:errors="*{startValid}"
+                    ></small>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('visitStart')}"
+                           th:errors="*{visitStart}"
+                    ></small>
+                </div>
+                <div class="form-group">
+                    <label for="visitEnd"
+                           th:text="#{visit.end}"
+                    ></label>
+                    <input id="visitEnd"
+                           type="text"
+                           class="form-control"
+                           th:field="*{visitEnd}"
+                           th:classappend="${#fields.hasErrors('visitEnd') or #fields.hasErrors('startEndValid') or #fields.hasErrors('endValid') ? 'is-invalid' : ''}"
+                    ></input>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('endValid')}"
+                           th:errors="*{endValid}"
+                    ></small>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('startEndValid')}"
+                           th:errors="*{startEndValid}"
+                    ></small>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('visitEnd')}"
+                           th:errors="*{visitEnd}"
+                    ></small>
+                </div>
+
+                <button type="submit"
+                        name="buttonSubmit"
+                        class="btn btn-primary"
+                        th:text="#{register.visit}"
+                ></button>
+                <button class="btn btn-primary"
+                        name="buttonCheck"
+                        type="submit"
+                        th:text="#{register.check}"
+                ></button>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:src="@{js/jquery-3.3.1.slim.min.js}"></script>
+<script th:src="@{js/popper.min.js}"></script>
+<script th:src="@{js/bootstrap.min.js}" ></script>
+<script th:src="@{js/flatpickr.js}"></script>
+<script th:src="@{js/et.js}"></script>
+<script th:src="@{js/datePicker.js}"></script>
+</body>
+</html>

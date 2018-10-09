@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="et">
+<head>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
+    <title th:text="#{title.registrations}"></title>
+    <link rel="stylesheet" th:href="@{css/bootstrap.min.css}"></link>
+</head>
+<body>
+<div class="container">
+    <div class="row my-1">
+        <div class="col">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-item nav-link"
+                           href="/"
+                           th:text="#{register}"
+                        ></a>
+                        <a class="nav-item nav-link active"
+                           href="/registrations"
+                           th:text="#{register.list}"
+                        ></a>
+                    </div>
+                    <div class="navbar-nav ml-auto">
+                        <a class="nav-item nav-link" th:href="@{/registrations(lang='et')}">EST</a>
+                        <a class="nav-item nav-link" th:href="@{/registrations(lang='en')}">ENG</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <span th:text="#{registrations.info}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row my-1" th:if="${dentistSearch} != null">
+        <div class="col">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="#{dentist.invalid}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <a class="btn btn-primary"
+               th:text="#{dentists.all}"
+               th:href="@{/registrations}"
+               th:attrappend="aria-pressed=(${param.dentist} == null ? 'true' : 'false')"
+               th:classappend="${param.dentist} == null or ${dentistSearch != null} ? 'active' : ''"
+            ></a>
+            <a class="btn btn-primary"
+               th:each="dentist : ${dentists}"
+               th:text="${dentist.getFullname()}"
+               th:href="@{/registrations(dentist=${dentist.getFullname()})}"
+               th:attrappend="aria-pressed=(${param.dentist} != null ? (${param.dentist[0]} == ${dentist.getFullname()} ? 'true' : 'false') : 'false')"
+               th:classappend="${param.dentist} != null ? (${param.dentist[0]} == ${dentist.getFullname()} ? 'active' : '') : ''"
+            ></a>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <table class="table table-hover table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col" th:text="#{dentist.name}"></th>
+                    <th scope="col" th:text="#{visit.date}"></th>
+                    <th scope="col" th:text="#{visit.start}"></th>
+                    <th scope="col" th:text="#{visit.end}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="visit : ${visits}" th:attr="data-href='/registrations/'+${visit.getId()}">
+                    <td th:text="${visit.getId()}"></td>
+                    <td th:text="${visit.getDentistName()}"></td>
+                    <td th:text="${#dates.format(visit.getVisitStart(), 'dd.MM.yyyy')}"></td>
+                    <td th:text="${#dates.format(visit.getVisitStart(), 'HH:mm')}"></td>
+                    <td th:text="${#dates.format(visit.getVisitEnd(), 'HH:mm')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script th:src="@{js/jquery-3.3.1.slim.min.js}"></script>
+<script th:src="@{js/popper.min.js}"></script>
+<script th:src="@{js/bootstrap.min.js}" ></script>
+<script th:src="@{js/registrations.js}"></script>
+</body>
+</html>
