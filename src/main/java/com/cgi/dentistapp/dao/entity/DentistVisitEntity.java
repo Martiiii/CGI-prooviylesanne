@@ -14,6 +14,9 @@ public class DentistVisitEntity {
     @Column(name = "dentist_name")
     private String dentistName;
 
+    @Column(name = "ssn")
+    private String ssn;
+
     @Column(name = "visit_start")
     private Date visitStart;
 
@@ -23,8 +26,9 @@ public class DentistVisitEntity {
     public DentistVisitEntity() {
     }
 
-    public DentistVisitEntity(String dentistName, Date visitStart, Date visitEnd) {
+    public DentistVisitEntity(String dentistName, String ssn, Date visitStart, Date visitEnd) {
         this.dentistName = dentistName;
+        this.ssn = ssn;
         this.visitStart = visitStart;
         this.visitEnd = visitEnd;
     }
@@ -35,6 +39,10 @@ public class DentistVisitEntity {
 
     public String getDentistName() {
         return this.dentistName;
+    }
+
+    public String getSsn() {
+        return this.ssn;
     }
 
     public Date getVisitStart() { return this.visitStart; }
@@ -51,6 +59,10 @@ public class DentistVisitEntity {
         this.dentistName = dentistName;
     }
 
+    public void setSsn(String ssn) {
+        this.ssn = ssn;
+    }
+
     public void setVisitStart(Date visitStart) {
         this.visitStart = visitStart;
     }
@@ -64,6 +76,7 @@ public class DentistVisitEntity {
         return "DentistVisitEntity{" +
                 "id=" + id +
                 ", dentistName='" + dentistName + '\'' +
+                ", ssn='" + ssn + '\'' +
                 ", visitStart=" + visitStart +
                 ", visitEnd=" + visitEnd +
                 '}';

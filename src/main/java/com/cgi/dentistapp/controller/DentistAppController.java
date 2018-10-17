@@ -2,6 +2,7 @@ package com.cgi.dentistapp.controller;
 
 import com.cgi.dentistapp.dao.entity.DentistVisitEntity;
 import com.cgi.dentistapp.dto.DentistVisitDTO;
+import com.cgi.dentistapp.dto.SearchDTO;
 import com.cgi.dentistapp.misc.Dentist;
 import com.cgi.dentistapp.service.DentistVisitService;
 
@@ -15,6 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Arrays;
@@ -145,33 +148,71 @@ public class DentistAppController extends WebMvcConfigurerAdapter {
             return "form";
         }
         // If no errors were present, add visit to the database
-        dentistVisitService.addVisit(dentistVisitDTO.getDentist(), dentistVisitDTO.getVisitStart(), dentistVisitDTO.getVisitEnd());
+        dentistVisitService.addVisit(dentistVisitDTO.getDentist(), dentistVisitDTO.getSsn(), dentistVisitDTO.getVisitStart(), dentistVisitDTO.getVisitEnd());
         return "redirect:/results";
     }
 
     @GetMapping("registrations")
-    public String showRegistrations(Model model, @RequestParam(value="dentist", required=false, defaultValue = "") String doctorParam) {
-        // Check if a specific doctor visits are to be displayed
-        if (doctorParam == null || doctorParam.equals("")) {
-            // Display all visits
-            model.addAttribute("visits", dentistVisitService.getAllVisits());
-        } else {
-            // Display a specific doctor's visits
-            // First check if doctor's name is in the "database"
+    public String showRegistrations(Model model, @RequestParam(value="dentist", required=false, defaultValue = "") String doctorParam, @RequestParam(value="ssn", required=false, defaultValue = "") String ssn) {
+        boolean dentistParamExists = false;
+        boolean ssnParamExists = false;
+
+        // If user searches a specific dentist
+        if (doctorParam != null && !doctorParam.equals("")) {
+            // First check if dentist's name is in the "database"
             Predicate<Dentist> doctorPredicate = doctor -> doctor.getFullname().equals(doctorParam);
             boolean doctorIsValid = dentists.stream().anyMatch(doctorPredicate);
 
             if (doctorIsValid) {
-                // If name was valild, show only selected doctor's visits
-                model.addAttribute("visits", dentistVisitService.getAllDentistVisits(doctorParam));
+                // If name was valid, toggle a flag
+                dentistParamExists = true;
             } else {
-                // If name was invalid, show error message and show all visits
+                // If name was invalid, show error message
                 model.addAttribute("dentistSearch", "Pick a valid dentist");
-                model.addAttribute("visits", dentistVisitService.getAllVisits());
             }
         }
+
+        // If user searches a specific SSN
+        if (ssn != null && !ssn.equals("")) {
+            if (ssn.matches("^(0|[1-9][0-9]*)$")) {
+                ssnParamExists = true;
+            } else {
+                model.addAttribute("ssnSearch", "Enter a valid dentist");
+            }
+        }
+
         model.addAttribute("dentists", dentists);
-        return "registrations";
+
+        if (dentistParamExists) {
+            if (ssnParamExists) {
+                // If user searches by both dentist and SSN
+                model.addAttribute("visits", dentistVisitService.getVisitsBySsnAndDentist(ssn, doctorParam));
+                return "registrations";
+            }
+            // If user searches by dentist only
+            model.addAttribute("visits", dentistVisitService.getAllDentistVisits(doctorParam));
+            return "registrations";
+        } else if (ssnParamExists) {
+            // If user searches by SSN only
+            model.addAttribute("visits", dentistVisitService.getVisitsBySsn(ssn));
+            return "registrations";
+        } else {
+            // If no search criterias were provided, show all visits
+            model.addAttribute("visits", dentistVisitService.getAllVisits());
+            return "registrations";
+        }
+    }
+
+    @PostMapping("registrations")
+    public String showRegistrations(@Valid SearchDTO searchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (searchDTO.getDentist() != null && !searchDTO.getDentist().equals("")) {
+            redirectAttributes.addAttribute("dentist", searchDTO.getDentist());
+        }
+        if (searchDTO.getSsn() != null && !searchDTO.getSsn().equals("")) {
+            redirectAttributes.addAttribute("ssn", searchDTO.getSsn());
+        }
+
+        return "redirect:/registrations";
     }
 
     @GetMapping("registrations/{id}")
@@ -179,6 +220,7 @@ public class DentistAppController extends WebMvcConfigurerAdapter {
         // Get the latest visit info from the database
         DentistVisitEntity visit = dentistVisitService.getVisitById(Long.parseLong(id));
         dentistVisitDTO.setDentist(visit.getDentistName());
+        dentistVisitDTO.setSsn(visit.getSsn());
         dentistVisitDTO.setVisitStart(visit.getVisitStart());
         dentistVisitDTO.setVisitEnd(visit.getVisitEnd());
 
@@ -236,6 +278,7 @@ public class DentistAppController extends WebMvcConfigurerAdapter {
 
         // If no errors found, change current visit's data
         visitEntity.setDentistName(dentistVisitDTO.getDentist());
+        visitEntity.setSsn(dentistVisitDTO.getSsn());
         visitEntity.setVisitStart(dentistVisitDTO.getVisitStart());
         visitEntity.setVisitEnd(dentistVisitDTO.getVisitEnd());
         dentistVisitService.updateVisit(visitEntity);

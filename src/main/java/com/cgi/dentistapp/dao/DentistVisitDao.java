@@ -71,4 +71,30 @@ public class DentistVisitDao {
         query.setParameter("name", name);
         return query.getResultList();
     }
+
+    /**
+     * Returns all visits that have the given SSN
+     *
+     * @param ssn SSN of the patient
+     * @return A list of visits that have the given SSN
+     */
+    public List<DentistVisitEntity> getVisitsBySsn(String ssn) {
+        TypedQuery<DentistVisitEntity> query = entityManager.createQuery("SELECT d FROM DentistVisitEntity d WHERE d.ssn=:ssn", DentistVisitEntity.class);
+        query.setParameter("ssn", ssn);
+        return query.getResultList();
+    }
+
+    /**
+     * Returns all visits that have the given SSN and the given dentist
+     *
+     * @param ssn SSN of the patient
+     * @param name Name of the dentist
+     * @return A list of visits that have the given SSN and the given dentist
+     */
+    public List<DentistVisitEntity> getVisitsBySsnAndDentist(String ssn, String name) {
+        TypedQuery<DentistVisitEntity> query = entityManager.createQuery("SELECT d FROM DentistVisitEntity d WHERE d.ssn=:ssn AND d.dentistName=:name", DentistVisitEntity.class);
+        query.setParameter("ssn", ssn);
+        query.setParameter("name", name);
+        return query.getResultList();
+    }
 }

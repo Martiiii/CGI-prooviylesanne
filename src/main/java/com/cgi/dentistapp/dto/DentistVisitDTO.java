@@ -1,10 +1,8 @@
 package com.cgi.dentistapp.dto;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.FutureOrPresent;
+
+import javax.validation.constraints.*;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -16,6 +14,14 @@ public class DentistVisitDTO {
     @NotNull
     @Size(min = 1, max = 50)
     private String dentist;
+
+    /**
+     * SSN of the patient.
+     */
+    @NotNull
+    @Size(min = 11, max = 11)
+    @Pattern(regexp="^(0|[1-9][0-9]*)$")
+    private String ssn;
 
     /**
      * Start time of the visit. Can't be null, must be in the future or present, has to be in format "dd.MM.yyyy HH:mm"
@@ -84,26 +90,35 @@ public class DentistVisitDTO {
     public DentistVisitDTO() {
     }
 
-    public DentistVisitDTO(String dentist, Date visitStart, Date visitEnd) {
+    public DentistVisitDTO(String dentist, String ssn, Date visitStart, Date visitEnd) {
         this.dentist = dentist;
+        this.ssn = ssn;
         this.visitStart = visitStart;
         this.visitEnd = visitEnd;
     }
 
     public String getDentist() {
-        return dentist;
+        return this.dentist;
     }
 
     public void setDentist(String dentist) {
         this.dentist = dentist;
     }
 
+    public String getSsn() {
+        return this.ssn;
+    }
+
+    public void setSsn(String ssn) {
+        this.ssn = ssn;
+    }
+
     public Date getVisitStart() {
-        return visitStart;
+        return this.visitStart;
     }
 
     public Date getVisitEnd() {
-        return visitEnd;
+        return this.visitEnd;
     }
 
     public void setVisitStart(Date visitStart) {

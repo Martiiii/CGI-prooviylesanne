@@ -78,6 +78,21 @@
                     ></small>
                 </div>
                 <div class="form-group">
+                    <label for="ssn"
+                           th:text="#{ssn.label}"
+                    ></label>
+                    <input id="ssn"
+                           type="text"
+                           class="form-control"
+                           th:field="*{ssn}"
+                           th:classappend="${#fields.hasErrors('ssn') ? 'is-invalid' : ''}"
+                    ></input>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('ssn')}"
+                           th:errors="*{ssn}"
+                    ></small>
+                </div>
+                <div class="form-group">
                     <label for="visitStart"
                            th:text="#{visit.start}"
                     ></label>

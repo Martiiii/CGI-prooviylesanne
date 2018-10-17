@@ -64,6 +64,22 @@
                     ></small>
                 </div>
                 <div class="form-group">
+                    <label for="ssn"
+                           th:text="#{ssn.label}"
+                    ></label>
+                    <input id="ssn"
+                           type="text"
+                           class="form-control"
+                           th:field="*{ssn}"
+                           th:classappend="${#fields.hasErrors('ssn') ? 'is-invalid' : ''}"
+                           th:attrappend="disabled=(${param.action} != null? (${param.action[0]} == 'edit'? 'false' : 'true') : 'true')"
+                    ></input>
+                    <small class="invalid-feedback"
+                           th:if="${#fields.hasErrors('ssn')}"
+                           th:errors="*{ssn}"
+                    ></small>
+                </div>
+                <div class="form-group">
                     <label th:attrappend="for=(${param.action} != null? (${param.action[0]} == 'edit'? 'visitStart' : 'visitStartRead') : 'visitStartRead')"
                            th:text="#{visit.start}"
                     ></label>

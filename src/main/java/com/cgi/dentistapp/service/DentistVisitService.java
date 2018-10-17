@@ -23,8 +23,8 @@ public class DentistVisitService {
      * @param visitStart Start time of the visit
      * @param visitEnd End time of the visit
      */
-    public void addVisit(String dentistName, Date visitStart, Date visitEnd) {
-        DentistVisitEntity dentistVisitEntity = new DentistVisitEntity(dentistName, visitStart, visitEnd);
+    public void addVisit(String dentistName, String ssn, Date visitStart, Date visitEnd) {
+        DentistVisitEntity dentistVisitEntity = new DentistVisitEntity(dentistName, ssn, visitStart, visitEnd);
         dentistVisitDao.create(dentistVisitEntity);
     }
 
@@ -73,5 +73,26 @@ public class DentistVisitService {
      */
     public List<DentistVisitEntity> getAllDentistVisits(String name) {
         return dentistVisitDao.getAllDentistVisits(name);
+    }
+
+    /**
+     * Returns all visits that have the given SSN
+     *
+     * @param ssn SSN of the patient
+     * @return A list of visits with the given SSN
+     */
+    public List<DentistVisitEntity> getVisitsBySsn(String ssn) {
+        return dentistVisitDao.getVisitsBySsn(ssn);
+    }
+
+    /**
+     * Returns all visits that have the given SSN and dentist
+     *
+     * @param ssn SSN of the patient
+     * @param name Name of the dentist
+     * @return A list of visits with the given SSN and dentist
+     */
+    public List<DentistVisitEntity> getVisitsBySsnAndDentist(String ssn, String name) {
+        return dentistVisitDao.getVisitsBySsnAndDentist(ssn, name);
     }
 }

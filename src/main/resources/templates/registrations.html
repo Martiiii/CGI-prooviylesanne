@@ -50,23 +50,72 @@
             </div>
         </div>
     </div>
-    <div class="row my-1">
+    <div class="row my-1" th:if="${ssnSearch} != null">
         <div class="col">
-            <a class="btn btn-primary"
-               th:text="#{dentists.all}"
-               th:href="@{/registrations}"
-               th:attrappend="aria-pressed=(${param.dentist} == null ? 'true' : 'false')"
-               th:classappend="${param.dentist} == null or ${dentistSearch != null} ? 'active' : ''"
-            ></a>
-            <a class="btn btn-primary"
-               th:each="dentist : ${dentists}"
-               th:text="${dentist.getFullname()}"
-               th:href="@{/registrations(dentist=${dentist.getFullname()})}"
-               th:attrappend="aria-pressed=(${param.dentist} != null ? (${param.dentist[0]} == ${dentist.getFullname()} ? 'true' : 'false') : 'false')"
-               th:classappend="${param.dentist} != null ? (${param.dentist[0]} == ${dentist.getFullname()} ? 'active' : '') : ''"
-            ></a>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="#{ssn.invalid}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         </div>
     </div>
+    <form th:action="@{/registrations}"
+          th:object="${searchDTO}"
+          method="post">
+        <div class="row my-1">
+            <div class="col">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-primary"
+                           th:classappend="${param.dentist} == null or ${dentistSearch != null} ? 'active' : ''"
+                    >
+                        <input type="radio"
+                               autocomplete="off"
+                               checked="true"
+                               th:text="#{dentists.all}"
+                               th:name="dentist"
+                               th:value="''"
+                               th:attrappend="checked=(${param.dentist} == null ? 'true' : 'false')"
+                        ></input>
+                    </label>
+                    <label class="btn btn-primary"
+                           th:each="dentist : ${dentists}"
+                           th:classappend="${param.dentist} != null ? (${param.dentist[0]} == ${dentist.getFullname()} ? 'active' : '') : ''"
+                    >
+                        <input type="radio"
+                               autocomplete="off"
+                               th:id="${dentist.getFullname()}"
+                               th:name="dentist"
+                               th:text="${dentist.getFullname()}"
+                               th:value="${dentist.getFullname()}"
+                               th:attrappend="checked=(${param.dentist} != null ? (${param.dentist[0]} == ${dentist.getFullname()} ? 'true' : 'false') : 'false')"
+
+                        ></input>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row my-1">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <input type="text"
+                           class="form-control"
+                           th:placeholder="#{ssn.label}"
+                           id="ssn"
+                           name="ssn"
+                           th:value="${param.ssn} != null ? ${param.ssn[0]} : ''"
+                    ></input>
+                    <div class="input-group-append">
+                        <button class="btn btn-primary"
+                                type="submit"
+                                th:text="#{search}"
+                        ></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
     <div class="row my-1">
         <div class="col">
             <table class="table table-hover table-striped">
@@ -74,6 +123,7 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col" th:text="#{dentist.name}"></th>
+                    <th scope="col" th:text="#{ssn.label}"></th>
                     <th scope="col" th:text="#{visit.date}"></th>
                     <th scope="col" th:text="#{visit.start}"></th>
                     <th scope="col" th:text="#{visit.end}"></th>
@@ -83,6 +133,7 @@
                 <tr th:each="visit : ${visits}" th:attr="data-href='/registrations/'+${visit.getId()}">
                     <td th:text="${visit.getId()}"></td>
                     <td th:text="${visit.getDentistName()}"></td>
+                    <td th:text="${visit.getSsn()}"></td>
                     <td th:text="${#dates.format(visit.getVisitStart(), 'dd.MM.yyyy')}"></td>
                     <td th:text="${#dates.format(visit.getVisitStart(), 'HH:mm')}"></td>
                     <td th:text="${#dates.format(visit.getVisitEnd(), 'HH:mm')}"></td>
